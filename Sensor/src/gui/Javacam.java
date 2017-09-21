@@ -51,8 +51,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-
-public class Javacam extends javax.swing.JFrame  {
+public class Javacam extends javax.swing.JFrame{
 //Arduino
     static SerialPort chosenPort;
     static int x = 0;
@@ -126,6 +125,8 @@ public class Javacam extends javax.swing.JFrame  {
         txt_numero = new javax.swing.JTextField();
         T_Pesquisador = new javax.swing.JLabel();
         txt_pesquisador = new javax.swing.JTextField();
+        txt_Arduino = new javax.swing.JScrollPane();
+        jTextPane1 = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
@@ -285,6 +286,10 @@ public class Javacam extends javax.swing.JFrame  {
         txt_pesquisador.setText("jTextField1");
         getContentPane().add(txt_pesquisador, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 80, 70, -1));
 
+        txt_Arduino.setViewportView(jTextPane1);
+
+        getContentPane().add(txt_Arduino, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 120, 300, 70));
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -360,8 +365,6 @@ public class Javacam extends javax.swing.JFrame  {
     }//GEN-LAST:event_btn_conectarActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        
-        
         for(int i = 0; i < portNames.length; i++){
 
             jComboBox1.addItem(portNames[i].getSystemPortName());
@@ -500,6 +503,8 @@ public class Javacam extends javax.swing.JFrame  {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel_EMG;
     private javax.swing.JPanel jPanel_GSR;
+    private javax.swing.JTextPane jTextPane1;
+    private javax.swing.JScrollPane txt_Arduino;
     private javax.swing.JTextField txt_coleta;
     private javax.swing.JTextField txt_individuo;
     private javax.swing.JTextField txt_nomeProjeto;
