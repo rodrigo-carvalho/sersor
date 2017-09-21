@@ -53,10 +53,7 @@ import java.util.Scanner;
 
 
 public class Javacam extends javax.swing.JFrame  {
-
-    /**
-     * Creates new form Javacam
-     */
+//Arduino
     static SerialPort chosenPort;
     static int x = 0;
     
@@ -70,8 +67,9 @@ public class Javacam extends javax.swing.JFrame  {
     private static FFmpegFrameRecorder recorder = null;
     private static OpenCVFrameGrabber grabber = null;
     private static final int WEBCAM_DEVICE_INDEX = 0;
-    private static final int CAPTUREWIDTH = 600;
-    private static final int CAPTUREHRIGHT = 600;
+    //Gravação do video da webcam
+    private static final int CAPTUREWIDTH = 800; //largura 
+    private static final int CAPTUREHRIGHT = 600; //Altura
     private static final int FRAME_RATE = 30;
     private static final int GOP_LENGTH_IN_FRAMES = 60;
     private volatile boolean runnable = true;
@@ -109,9 +107,31 @@ public class Javacam extends javax.swing.JFrame  {
         jLabel1 = new javax.swing.JLabel();
         btn_conectar = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox<>();
+        T_ECG = new java.awt.Label();
         jPanel1 = new javax.swing.JPanel();
+        T_GSR = new java.awt.Label();
+        jPanel_GSR = new javax.swing.JPanel();
+        T_EMG = new java.awt.Label();
+        jPanel_EMG = new javax.swing.JPanel();
+        FootPanel = new java.awt.Panel();
+        T_Porta = new java.awt.Label();
+        T_Baud = new java.awt.Label();
+        T_NomeProjeto = new javax.swing.JLabel();
+        txt_nomeProjeto = new javax.swing.JTextField();
+        T_Coleta = new javax.swing.JLabel();
+        txt_coleta = new javax.swing.JTextField();
+        T_Individuo = new javax.swing.JLabel();
+        txt_individuo = new javax.swing.JTextField();
+        T_numero = new javax.swing.JLabel();
+        txt_numero = new javax.swing.JTextField();
+        T_Pesquisador = new javax.swing.JLabel();
+        txt_pesquisador = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setAlwaysOnTop(true);
+        setBackground(new java.awt.Color(102, 102, 102));
+        setMinimumSize(new java.awt.Dimension(1024, 768));
+        setPreferredSize(new java.awt.Dimension(1027, 768));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         btn_start.setText("Start");
@@ -120,7 +140,7 @@ public class Javacam extends javax.swing.JFrame  {
                 btn_startActionPerformed(evt);
             }
         });
-        getContentPane().add(btn_start, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 180, 70, -1));
+        getContentPane().add(btn_start, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 420, 70, -1));
 
         btn_pause.setText("Stop");
         btn_pause.addActionListener(new java.awt.event.ActionListener() {
@@ -128,11 +148,12 @@ public class Javacam extends javax.swing.JFrame  {
                 btn_pauseActionPerformed(evt);
             }
         });
-        getContentPane().add(btn_pause, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 180, 70, -1));
-        getContentPane().add(canvas1, new org.netbeans.lib.awtextra.AbsoluteConstraints(41, 29, 300, 140));
+        getContentPane().add(btn_pause, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 420, 70, -1));
+        getContentPane().add(canvas1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 120, 410, 280));
 
-        jLabel1.setText("Sistema de Captura de dados fisiológicos (SISCaDaFis)");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 0, -1, -1));
+        jLabel1.setFont(new java.awt.Font("Lucida Console", 0, 24)); // NOI18N
+        jLabel1.setText("PhysioMetrics");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 10, -1, 20));
 
         btn_conectar.setText("Conectar");
         btn_conectar.addActionListener(new java.awt.event.ActionListener() {
@@ -140,7 +161,7 @@ public class Javacam extends javax.swing.JFrame  {
                 btn_conectarActionPerformed(evt);
             }
         });
-        getContentPane().add(btn_conectar, new org.netbeans.lib.awtextra.AbsoluteConstraints(127, 180, 80, -1));
+        getContentPane().add(btn_conectar, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 420, 120, -1));
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
@@ -148,20 +169,121 @@ public class Javacam extends javax.swing.JFrame  {
                 jComboBox1ActionPerformed(evt);
             }
         });
-        getContentPane().add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(36, 180, 90, -1));
+        getContentPane().add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 420, 90, -1));
+
+        T_ECG.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        T_ECG.setText("ECG");
+        getContentPane().add(T_ECG, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 510, -1, -1));
+
+        jPanel1.setBackground(new java.awt.Color(51, 51, 51));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 310, Short.MAX_VALUE)
+            .addGap(0, 870, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 140, Short.MAX_VALUE)
+            .addGap(0, 60, Short.MAX_VALUE)
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 210, 310, 140));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 490, 870, 60));
+
+        T_GSR.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        T_GSR.setText("GSR");
+        getContentPane().add(T_GSR, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 590, -1, -1));
+
+        jPanel_GSR.setBackground(new java.awt.Color(51, 51, 51));
+
+        javax.swing.GroupLayout jPanel_GSRLayout = new javax.swing.GroupLayout(jPanel_GSR);
+        jPanel_GSR.setLayout(jPanel_GSRLayout);
+        jPanel_GSRLayout.setHorizontalGroup(
+            jPanel_GSRLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 870, Short.MAX_VALUE)
+        );
+        jPanel_GSRLayout.setVerticalGroup(
+            jPanel_GSRLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 60, Short.MAX_VALUE)
+        );
+
+        getContentPane().add(jPanel_GSR, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 570, -1, -1));
+
+        T_EMG.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        T_EMG.setText("EMG");
+        getContentPane().add(T_EMG, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 670, -1, -1));
+
+        jPanel_EMG.setBackground(new java.awt.Color(51, 51, 51));
+
+        javax.swing.GroupLayout jPanel_EMGLayout = new javax.swing.GroupLayout(jPanel_EMG);
+        jPanel_EMG.setLayout(jPanel_EMGLayout);
+        jPanel_EMGLayout.setHorizontalGroup(
+            jPanel_EMGLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 870, Short.MAX_VALUE)
+        );
+        jPanel_EMGLayout.setVerticalGroup(
+            jPanel_EMGLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 60, Short.MAX_VALUE)
+        );
+
+        getContentPane().add(jPanel_EMG, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 650, -1, -1));
+
+        T_Porta.setText("Porta: ");
+
+        T_Baud.setText("Baud");
+
+        javax.swing.GroupLayout FootPanelLayout = new javax.swing.GroupLayout(FootPanel);
+        FootPanel.setLayout(FootPanelLayout);
+        FootPanelLayout.setHorizontalGroup(
+            FootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(FootPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(T_Porta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(79, 79, 79)
+                .addComponent(T_Baud, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(869, Short.MAX_VALUE))
+        );
+        FootPanelLayout.setVerticalGroup(
+            FootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(FootPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(FootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(T_Porta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(T_Baud, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        getContentPane().add(FootPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 730, 1030, 40));
+
+        T_NomeProjeto.setText("Nome do Projeto");
+        getContentPane().add(T_NomeProjeto, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 50, -1, -1));
+
+        txt_nomeProjeto.setText("jTextField1");
+        getContentPane().add(txt_nomeProjeto, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 50, 200, -1));
+
+        T_Coleta.setText("Coleta");
+        getContentPane().add(T_Coleta, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 50, -1, -1));
+
+        txt_coleta.setText("jTextField1");
+        getContentPane().add(txt_coleta, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 50, 180, -1));
+
+        T_Individuo.setText("Indivíduo");
+        getContentPane().add(T_Individuo, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 50, -1, -1));
+
+        txt_individuo.setText("jTextField1");
+        getContentPane().add(txt_individuo, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 50, 170, -1));
+
+        T_numero.setText("Número");
+        getContentPane().add(T_numero, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 50, -1, -1));
+
+        txt_numero.setText("jTextField1");
+        getContentPane().add(txt_numero, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 50, 70, -1));
+
+        T_Pesquisador.setText("Pesquisador");
+        getContentPane().add(T_Pesquisador, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 80, -1, -1));
+
+        txt_pesquisador.setText("jTextField1");
+        getContentPane().add(txt_pesquisador, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 80, 70, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -259,6 +381,7 @@ public class Javacam extends javax.swing.JFrame  {
                         grabber.setImageWidth(CAPTUREWIDTH);
                         grabber.setImageHeight(CAPTUREHRIGHT);
                         grabber.start();
+//Modificar o nome do aquivo conforme a coleta
                         recorder = new FFmpegFrameRecorder(
                                 "output.mp4",
                                 CAPTUREWIDTH, CAPTUREHRIGHT, 2);
@@ -357,6 +480,17 @@ public class Javacam extends javax.swing.JFrame  {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private java.awt.Panel FootPanel;
+    private java.awt.Label T_Baud;
+    private javax.swing.JLabel T_Coleta;
+    private java.awt.Label T_ECG;
+    private java.awt.Label T_EMG;
+    private java.awt.Label T_GSR;
+    private javax.swing.JLabel T_Individuo;
+    private javax.swing.JLabel T_NomeProjeto;
+    private javax.swing.JLabel T_Pesquisador;
+    private java.awt.Label T_Porta;
+    private javax.swing.JLabel T_numero;
     private javax.swing.JButton btn_conectar;
     private javax.swing.JButton btn_pause;
     private javax.swing.JButton btn_start;
@@ -364,5 +498,12 @@ public class Javacam extends javax.swing.JFrame  {
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel_EMG;
+    private javax.swing.JPanel jPanel_GSR;
+    private javax.swing.JTextField txt_coleta;
+    private javax.swing.JTextField txt_individuo;
+    private javax.swing.JTextField txt_nomeProjeto;
+    private javax.swing.JTextField txt_numero;
+    private javax.swing.JTextField txt_pesquisador;
     // End of variables declaration//GEN-END:variables
 }
