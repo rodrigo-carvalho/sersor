@@ -1,0 +1,13 @@
+Tempo: 1 Dado: CG: 2
+Tempo: 2 Dado: CG: 2
+Tempo: 3 Dado: CG: 2
+Tempo: 4 Dado: CG: 2
+Tempo: 5 Dado: CG: 2
+Tempo: 6 Dado: CG: 2
+Tempo: 7 Dado: CG: 2
+Tempo: 8 Dado: CG: 2
+Tempo: 9 Dado: CG: 2
+Tempo: 10 Dado: CG: 2
+Tempo: 11 Dado: CG: 2
+Tempo: 12 Dado: CG: 2
+Tempo: 13 Dado: CG: 2
