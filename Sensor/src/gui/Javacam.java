@@ -1,14 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui;
-
-/**
- *
- * @author CELPA3
- */
 
 import java.awt.Graphics;
 import java.awt.Image;
@@ -65,6 +55,7 @@ public class Javacam extends javax.swing.JFrame{
     
     private static FFmpegFrameRecorder recorder = null;
     private static OpenCVFrameGrabber grabber = null;
+    private static OpenCVFrameGrabber grabberi = null;
     private static final int WEBCAM_DEVICE_INDEX = 0;
     //Gravação do video da webcam
     private static final int CAPTUREWIDTH = 800; //largura 
@@ -74,21 +65,27 @@ public class Javacam extends javax.swing.JFrame{
     private volatile boolean runnable = true;
     private static final long serialVersionUID = 1L;
     private Catcher cat;
+    private Catcheri cati;
     private Thread catcher;
+    private Thread catcheri;
     
     SerialPort[] portNames = SerialPort.getCommPorts();
     
-    XYSeries series = new XYSeries("Light Sensor Readings");
-    XYSeriesCollection dataset = new XYSeriesCollection(series);
-    JFreeChart chart = ChartFactory.createXYLineChart("Light Sensor Readings", "Time (seconds)", "ADC Reading", dataset);
-
-    
-    
     public Javacam() {
         initComponents();
+        grabberi = new OpenCVFrameGrabber(WEBCAM_DEVICE_INDEX);
         grabber = new OpenCVFrameGrabber(WEBCAM_DEVICE_INDEX);
         cat = new Catcher();
-        jPanel1.add(new ChartPanel(chart), BorderLayout.CENTER);
+        cati = new Catcheri();
+        catcheri = new Thread(cati);
+        catcheri.start();
+        
+        //runnable = true;
+        
+        
+                
+        //jPanel1.add(new ChartPanel(chart), BorderLayout.CENTER);
+        //window.add(new ChartPanel(chart), BorderLayout.CENTER);
     }
 
     /**
@@ -101,7 +98,7 @@ public class Javacam extends javax.swing.JFrame{
     private void initComponents() {
 
         btn_start = new javax.swing.JButton();
-        btn_pause = new javax.swing.JButton();
+        btn_stop = new javax.swing.JButton();
         canvas1 = new java.awt.Canvas();
         jLabel1 = new javax.swing.JLabel();
         btn_conectar = new javax.swing.JButton();
@@ -112,10 +109,6 @@ public class Javacam extends javax.swing.JFrame{
         jPanel_GSR = new javax.swing.JPanel();
         T_EMG = new java.awt.Label();
         jPanel_EMG = new javax.swing.JPanel();
-        FootPanel = new java.awt.Panel();
-        T_Porta = new java.awt.Label();
-        T_Baud = new java.awt.Label();
-        T_NomeProjeto = new javax.swing.JLabel();
         txt_nomeProjeto = new javax.swing.JTextField();
         T_Coleta = new javax.swing.JLabel();
         txt_coleta = new javax.swing.JTextField();
@@ -125,8 +118,10 @@ public class Javacam extends javax.swing.JFrame{
         txt_numero = new javax.swing.JTextField();
         T_Pesquisador = new javax.swing.JLabel();
         txt_pesquisador = new javax.swing.JTextField();
-        txt_Arduino = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
+        T_NomeProjeto = new javax.swing.JLabel();
+        T_NomeProjeto1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
@@ -141,15 +136,15 @@ public class Javacam extends javax.swing.JFrame{
                 btn_startActionPerformed(evt);
             }
         });
-        getContentPane().add(btn_start, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 420, 70, -1));
+        getContentPane().add(btn_start, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 420, 70, -1));
 
-        btn_pause.setText("Stop");
-        btn_pause.addActionListener(new java.awt.event.ActionListener() {
+        btn_stop.setText("Stop");
+        btn_stop.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_pauseActionPerformed(evt);
+                btn_stopActionPerformed(evt);
             }
         });
-        getContentPane().add(btn_pause, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 420, 70, -1));
+        getContentPane().add(btn_stop, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 420, 70, -1));
         getContentPane().add(canvas1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 120, 410, 280));
 
         jLabel1.setFont(new java.awt.Font("Lucida Console", 0, 24)); // NOI18N
@@ -162,7 +157,7 @@ public class Javacam extends javax.swing.JFrame{
                 btn_conectarActionPerformed(evt);
             }
         });
-        getContentPane().add(btn_conectar, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 420, 120, -1));
+        getContentPane().add(btn_conectar, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 420, 120, -1));
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
@@ -170,13 +165,13 @@ public class Javacam extends javax.swing.JFrame{
                 jComboBox1ActionPerformed(evt);
             }
         });
-        getContentPane().add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 420, 90, -1));
+        getContentPane().add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 420, 90, -1));
 
         T_ECG.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
         T_ECG.setText("ECG");
         getContentPane().add(T_ECG, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 510, -1, -1));
 
-        jPanel1.setBackground(new java.awt.Color(51, 51, 51));
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -228,107 +223,73 @@ public class Javacam extends javax.swing.JFrame{
         );
 
         getContentPane().add(jPanel_EMG, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 650, -1, -1));
-
-        T_Porta.setText("Porta: ");
-
-        T_Baud.setText("Baud");
-
-        javax.swing.GroupLayout FootPanelLayout = new javax.swing.GroupLayout(FootPanel);
-        FootPanel.setLayout(FootPanelLayout);
-        FootPanelLayout.setHorizontalGroup(
-            FootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(FootPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(T_Porta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(79, 79, 79)
-                .addComponent(T_Baud, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(869, Short.MAX_VALUE))
-        );
-        FootPanelLayout.setVerticalGroup(
-            FootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(FootPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(FootPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(T_Porta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(T_Baud, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        getContentPane().add(FootPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 730, 1030, 40));
-
-        T_NomeProjeto.setText("Nome do Projeto");
-        getContentPane().add(T_NomeProjeto, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 50, -1, -1));
-
-        txt_nomeProjeto.setText("jTextField1");
         getContentPane().add(txt_nomeProjeto, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 50, 200, -1));
 
         T_Coleta.setText("Coleta");
         getContentPane().add(T_Coleta, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 50, -1, -1));
-
-        txt_coleta.setText("jTextField1");
         getContentPane().add(txt_coleta, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 50, 180, -1));
 
         T_Individuo.setText("Indivíduo");
         getContentPane().add(T_Individuo, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 50, -1, -1));
-
-        txt_individuo.setText("jTextField1");
         getContentPane().add(txt_individuo, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 50, 170, -1));
 
         T_numero.setText("Número");
         getContentPane().add(T_numero, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 50, -1, -1));
-
-        txt_numero.setText("jTextField1");
         getContentPane().add(txt_numero, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 50, 70, -1));
 
         T_Pesquisador.setText("Pesquisador");
         getContentPane().add(T_Pesquisador, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 80, -1, -1));
-
-        txt_pesquisador.setText("jTextField1");
         getContentPane().add(txt_pesquisador, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 80, 70, -1));
 
-        txt_Arduino.setViewportView(jTextPane1);
+        T_NomeProjeto.setText("Dados");
+        getContentPane().add(T_NomeProjeto, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 430, -1, -1));
 
-        getContentPane().add(txt_Arduino, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 120, 300, 70));
+        T_NomeProjeto1.setText("Nome do Projeto");
+        getContentPane().add(T_NomeProjeto1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 50, -1, -1));
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
+
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 370, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_startActionPerformed
-        // TODO add your handling code here:
-            //Catcher.stop();
-//            catcher = new Thread(cat);
-//            catcher.start();
-            catcher = new Thread(cat);
-            catcher.start();
-            runnable = true;
+        catcheri.stop(); // Stop Preview
+        catcher = new Thread(cat); //Start Recording
+        catcher.start();
+        runnable = true;
+            
+        //Arduino data Save
+            
 
         
     }//GEN-LAST:event_btn_startActionPerformed
 
-    private void btn_pauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_pauseActionPerformed
-        
-        /// stop button 
-//            Catcher = new Thread(cat);
-//            Catcher.start();
-            
+    private void btn_stopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_stopActionPerformed
+        catcheri.stop();
+        catcher.stop();
+        runnable = false;
         try {
-            catcher.stop();
             recorder.stop();
-            grabber.stop();
         } catch (Exception ex) {
             Logger.getLogger(Javacam.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FrameGrabber.Exception ex) {
-            Logger.getLogger(Javacam.class.getName()).log(Level.SEVERE, null, ex);
         }
-            
-            runnable = false;
-          //  webSource.release();	
         
+        //Limpar o gráfico
         
-    }//GEN-LAST:event_btn_pauseActionPerformed
+    }//GEN-LAST:event_btn_stopActionPerformed
 
     private void btn_conectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_conectarActionPerformed
-        // TODO add your handling code here:
+        XYSeries series = new XYSeries("Light Sensor Readings");
+        XYSeriesCollection dataset = new XYSeriesCollection(series);
+        JFreeChart chart = ChartFactory.createXYLineChart("Light Sensor Readings", "Time (seconds)", "ADC Reading", dataset);
+
+        jPanel1.add(new ChartPanel(chart), BorderLayout.CENTER);    
+
+    // TODO add your handling code here:
             if(btn_conectar.getText().equals("Conectar")) {
             // attempt to connect to the serial port
                 chosenPort = SerialPort.getCommPort(jComboBox1.getSelectedItem().toString());
@@ -339,20 +300,27 @@ public class Javacam extends javax.swing.JFrame{
                 }
 
             // create a new thread that listens for incoming text and populates the graph
+            //No arduino está assim Serial.println(heart_rate);
                 Thread thread = new Thread(){
                     @Override public void run() {
+                        System.out.println("teste1");
                         Scanner scanner = new Scanner(chosenPort.getInputStream());
                         while(scanner.hasNextLine()) {
                             String line = scanner.nextLine();
-                            int number = Integer.parseInt(line);
+                            //System.out.println(line);
+                            //int number = Integer.parseInt(line);
                             //series.add(x++, 1023 - number);
-                            series.add(x++, number);
+                            //series.add(x++, number);
+                            jTextArea1.setText(line);
+                            //System.out.println(number);
                             jPanel1.repaint();
                         }
                         scanner.close();
                     }
                 };
+                System.out.println("teste4");
             thread.start();
+            System.out.println("teste5");
             } else {
                     // disconnect from the serial port
                     chosenPort.closePort();
@@ -372,6 +340,50 @@ public class Javacam extends javax.swing.JFrame{
         
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
+    class Catcheri implements Runnable {
+
+        @Override
+        public void run() {
+            synchronized (this) {
+               // while (runnable) {
+                    try {
+                        
+                        grabberi.setImageWidth(CAPTUREWIDTH);
+                        grabberi.setImageHeight(CAPTUREHRIGHT);
+                        grabberi.start();
+                        
+
+                        Frame capturedFrame = null;
+                        Java2DFrameConverter paintConverter = new Java2DFrameConverter();
+                        long startTime = System.currentTimeMillis();
+                        long frame = 0;
+                        while ((capturedFrame = grabberi.grab()) != null&&runnable) {
+                            BufferedImage buff = paintConverter.getBufferedImage(capturedFrame, 1);
+                            Graphics g = canvas1.getGraphics();
+                            g.drawImage(buff, 0, 0, CAPTUREWIDTH, CAPTUREHRIGHT, 0, 0, buff.getWidth(), buff.getHeight(), null);
+                            //recorder.record(capturedFrame);
+                            frame++;
+                            long waitMillis = 1000 * frame / FRAME_RATE - (System.currentTimeMillis() - startTime);
+                            while (waitMillis <= 0) {
+                                // If this error appeared, better to consider lower FRAME_RATE.
+                                System.out.println("[ERROR] grab image operation is too slow to encode, skip grab image at frame = " + frame + ", waitMillis = " + waitMillis);
+                                //recorder.record(capturedFrame);  // use same capturedFrame for fast processing.
+                                frame++;
+                                waitMillis = 1000 * frame / FRAME_RATE - (System.currentTimeMillis() - startTime);
+                            }
+                            //System.out.println("frame " + frame + ", System.currentTimeMillis() = " + System.currentTimeMillis() + ", waitMillis = " + waitMillis);
+                            Thread.sleep(waitMillis);
+                        }
+                    } catch (FrameGrabber.Exception ex) {
+                    Logger.getLogger(Javacam.class.getName()).log(Level.SEVERE, null, ex);
+                    }  catch (InterruptedException ex) {
+                        Logger.getLogger(Javacam.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                //}//end of while
+            }
+        }
+    }
     
     class Catcher implements Runnable {
 
@@ -483,28 +495,26 @@ public class Javacam extends javax.swing.JFrame{
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private java.awt.Panel FootPanel;
-    private java.awt.Label T_Baud;
     private javax.swing.JLabel T_Coleta;
     private java.awt.Label T_ECG;
     private java.awt.Label T_EMG;
     private java.awt.Label T_GSR;
     private javax.swing.JLabel T_Individuo;
     private javax.swing.JLabel T_NomeProjeto;
+    private javax.swing.JLabel T_NomeProjeto1;
     private javax.swing.JLabel T_Pesquisador;
-    private java.awt.Label T_Porta;
     private javax.swing.JLabel T_numero;
     private javax.swing.JButton btn_conectar;
-    private javax.swing.JButton btn_pause;
     private javax.swing.JButton btn_start;
+    private javax.swing.JButton btn_stop;
     private java.awt.Canvas canvas1;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel_EMG;
     private javax.swing.JPanel jPanel_GSR;
-    private javax.swing.JTextPane jTextPane1;
-    private javax.swing.JScrollPane txt_Arduino;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField txt_coleta;
     private javax.swing.JTextField txt_individuo;
     private javax.swing.JTextField txt_nomeProjeto;
