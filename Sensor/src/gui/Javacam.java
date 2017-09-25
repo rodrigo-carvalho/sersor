@@ -46,6 +46,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import org.jfree.data.general.DefaultPieDataset;
 
 public class Javacam extends javax.swing.JFrame{
 //Arduino
@@ -93,10 +94,10 @@ public class Javacam extends javax.swing.JFrame{
         catcheri.start();
         
         //runnable = true;
-        
-        
         //jPanel1.add(new ChartPanel(chart), BorderLayout.CENTER);
         //window.add(new ChartPanel(chart), BorderLayout.CENTER);
+        
+         
     }
 
     @SuppressWarnings("unchecked")
@@ -284,21 +285,19 @@ public class Javacam extends javax.swing.JFrame{
                             try {
                                 
                                 writer.write("Tempo: " + tempo + " Dado: " + line);
-                                System.out.println(line);
+                                //System.out.println(line);
                                 writer.newLine();  //Escreveu uma linha
                             } catch (IOException ex) {
                                 Logger.getLogger(Javacam.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                           // gravarArq.printf(line);
-                            System.out.println("3...");
-                            
+                                                    
                             try { 
                                 TimeUnit.MILLISECONDS.sleep(920);
                             } catch (InterruptedException ex) {
                                 Logger.getLogger(Javacam.class.getName()).log(Level.SEVERE, null, ex);
                             }
                             
-                            System.out.println("Tempo: " + tempo);
+                            //System.out.println("Tempo: " + tempo);
                             try {
                                 writer.flush();
                             } catch (IOException ex) {
@@ -312,8 +311,6 @@ public class Javacam extends javax.swing.JFrame{
                         } catch (IOException ex) {
                             Logger.getLogger(Javacam.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        
-                        System.out.println("4");
                     }
                 };
             
@@ -344,12 +341,14 @@ public class Javacam extends javax.swing.JFrame{
     }//GEN-LAST:event_btn_stopActionPerformed
 
     private void btn_conectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_conectarActionPerformed
+       
+        /*Isso aqui não ta executando
         XYSeries series = new XYSeries("Light Sensor Readings");
         XYSeriesCollection dataset = new XYSeriesCollection(series);
         JFreeChart chart = ChartFactory.createXYLineChart("Light Sensor Readings", "Time (seconds)", "ADC Reading", dataset);
 
         jPanel1.add(new ChartPanel(chart), BorderLayout.CENTER);    
-
+*/
     // TODO add your handling code here:
             if(btn_conectar.getText().equals("Conectar")) {
             // attempt to connect to the serial port
@@ -368,23 +367,29 @@ public class Javacam extends javax.swing.JFrame{
                         Scanner scanner = new Scanner(chosenPort.getInputStream());
                         while(scanner.hasNextLine()) {
                             String line = scanner.nextLine();
-                            jTextArea1.setText(line);
-                            //System.out.println(number);
+                            jTextArea1.setText(line);//imprime na tela oq vem do arduino
+
+//Colocando o valor do HR em uma variavel, agora é só converter pra int e imprimir no gráfico
+                            String [] valorComSplit = line.split("HR");
+                                for (String hrValor : valorComSplit ){
+                                    System.out.println("o valor do HR é " + hrValor);
+                                }
+                            
                             jPanel1.repaint();                                                                                                                              
                         }
                         scanner.close();
                     }
                 };
-                System.out.println("teste4");
+                //System.out.println("teste4");
             thread.start();
-            System.out.println("teste5");
+            //System.out.println("teste5");
             } else {
                     // disconnect from the serial port
                     chosenPort.closePort();
                     jComboBox1.setEnabled(true);
                     btn_conectar.setText("Connect");
-                    series.clear();
-                    x = 0;
+                    //series.clear();
+                    //x = 0;
             }
         
     }//GEN-LAST:event_btn_conectarActionPerformed
